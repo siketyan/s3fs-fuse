@@ -71,6 +71,7 @@ static mode_t mp_mode             = 0;    // mode of mount point
 static mode_t mp_umask            = 0;    // umask for mount point
 static bool is_mp_umask           = false;// default does not set.
 static std::string mountpoint;
+static std::string aws_credentials_file;
 static std::string passwd_file;
 static std::string mimetype_file;
 static bool nocopyapi             = false;
@@ -3904,7 +3905,8 @@ static int read_passwd_file()
 // 2 - from a password file specified on the command line
 // 3 - from environment variables
 // 3a - from the AWS_CREDENTIAL_FILE environment variable
-// 3b - from ${HOME}/.aws/credentials
+// 3b - from aws_credentials_file option, with the file that has the same format as .aws/credentials
+// 3c - from ${HOME}/.aws/credentials
 // 4 - from the users ~/.passwd-s3fs
 // 5 - from /etc/passwd-s3fs
 //
@@ -3986,7 +3988,18 @@ static int get_access_keys()
         }
     }
 
-    // 3b - check ${HOME}/.aws/credentials
+    S3FS_PRN_INFO("%s", aws_credentials_file.c_str());
+    // 3b - from aws_credentials_file option, with the file that has the same format as .aws/credentials
+    if (!aws_credentials_file.empty()) {
+        if(read_aws_credentials_file(aws_credentials_file) == EXIT_SUCCESS) {
+            return EXIT_SUCCESS;
+        }else if(aws_profile != "default"){
+            S3FS_PRN_EXIT("Could not find profile: %s in file: %s", aws_profile.c_str(), aws_credentials_file.c_str());
+            return EXIT_FAILURE;
+        }
+    }
+
+    // 3c - check ${HOME}/.aws/credentials
     std::string aws_credentials = std::string(getpwuid(getuid())->pw_dir) + "/.aws/credentials";
     if(read_aws_credentials_file(aws_credentials) == EXIT_SUCCESS) {
         return EXIT_SUCCESS;
@@ -4386,6 +4399,10 @@ static int my_fuse_opt_proc(void* data, const char* arg, int key, struct fuse_ar
                 S3FS_PRN_EXIT("poorly formed argument to option: ssl_verify_hostname.");
                 return -1;
             }
+            return 0;
+        }
+        if(is_prefix(arg, "aws_credentials_file=")) {
+            aws_credentials_file = strchr(arg, '=') + sizeof(char);
             return 0;
         }
         if(is_prefix(arg, "passwd_file=")){
