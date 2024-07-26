@@ -212,7 +212,7 @@ jobs:
           - mingw64
     defaults:
       run:
-        shell: msys {0}
+        shell: msys2 {0}
     steps:
       - uses: actions/checkout@v4
 
