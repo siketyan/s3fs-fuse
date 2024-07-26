@@ -232,7 +232,7 @@ jobs:
 
       - name: Install WinFsp
         shell: powershell
-        run: winget install WinFsp.WinFsp
+        run: winget install WinFsp.WinFsp --disable-interactivity --accept-source-agreements
 
       - name: Setup WinFsp as a dependency
         run: |
