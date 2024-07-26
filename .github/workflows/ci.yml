@@ -254,8 +254,8 @@ jobs:
       - name: Build
         run: |
           ./autogen.sh
-          CXXFLAGS="-I/usr/include" PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(pwd)" ./configure
-          make --jobs=$(nproc)
+          PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(pwd)" ./configure
+          make --jobs=$(nproc) CXXFLAGS="-I/usr/include"
 
       - name: Test suite
         run: |
