@@ -203,6 +203,58 @@ jobs:
           make check -C src
           make ALL_TESTS=1 check -C test || (test/filter-suite-log.sh test/test-suite.log; exit 1)
 
+
+  Windows:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        sys:
+          - mingw64
+    defaults:
+      run:
+        shell: msys {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: winfsp/winfsp
+          ref: v2.0
+          path: WinFsp
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: ${{ matrix.sys }}
+          install: git autoconf automake gcc make pkg-config openssl-devel libcurl-devel libxml2-devel libzstd-devel
+
+      - name: Setup WinFsp as a dependency
+        run: |
+          cp -r "/c/Program Files (x86)/WinFsp" ./WinFsp
+          cat > ./fuse.pc << 'EOS'
+          arch=x64
+          prefix=${pcfiledir}/WinFsp
+          incdir=${prefix}/inc/fuse
+          implib=${prefix}/bin/winfsp-${arch}.dll
+          
+          Name: fuse
+          Description: WinFsp FUSE compatible API
+          Version: 2.8.4
+          URL: http://www.secfs.net/winfsp/
+          Libs: "${implib}"
+          Cflags: -I"${incdir}"
+          EOS
+
+      - name: Build
+        run: |
+          ./autogen.sh
+          CXXFLAGS="-I/usr/include" PKG_CONFIG_PATH="$PKG_CONFIG_PATH:$(pwd)" ./configure
+          make --jobs=$(nproc)
+
+      - name: Test suite
+        run: |
+          make check -C src
+          make ALL_TESTS=1 check -C test || (test/filter-suite-log.sh test/test-suite.log; exit 1)
+
   MemoryTest:
     runs-on: ubuntu-latest
 
