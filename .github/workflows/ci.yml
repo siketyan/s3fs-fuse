@@ -236,7 +236,24 @@ jobs:
 
       - name: Setup WinFsp as a dependency
         run: |
+          # TODO: https://github.com/winfsp/winfsp/pull/567
+          patch -d ./WinFsp << 'EOS'
+          diff --git a/inc/fuse/winfsp_fuse.h b/inc/fuse/winfsp_fuse.h
+          index 054d4af6..9dcc67dc 100644
+          --- a/inc/fuse/winfsp_fuse.h
+          +++ b/inc/fuse/winfsp_fuse.h
+          @@ -25,6 +25,7 @@
+          
+           #include <errno.h>
+           #include <stdint.h>
+          +#include <string.h>
+           #if !defined(WINFSP_DLL_INTERNAL)
+           #include <stdlib.h>
+           #endif
+          EOS
+          
           cp -r "/c/Program Files (x86)/WinFsp/bin" ./WinFsp/bin
+          
           cat > ./fuse.pc << 'EOS'
           arch=x64
           prefix=${pcfiledir}/WinFsp
