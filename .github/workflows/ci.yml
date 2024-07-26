@@ -216,12 +216,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/checkout@v4
-        with:
-          repository: winfsp/winfsp
-          ref: v2.0
-          path: WinFsp
-
       - uses: msys2/setup-msys2@v2
         with:
           msystem: ${{ matrix.sys }}
@@ -236,6 +230,8 @@ jobs:
 
       - name: Setup WinFsp as a dependency
         run: |
+          git clone --single-branch -b v2.0 https://github.com/winfsp/winfsp.git WinFsp  
+          
           # TODO: https://github.com/winfsp/winfsp/pull/567
           patch -f -d ./WinFsp << 'EOS'
           diff --git a/inc/fuse/winfsp_fuse.h b/inc/fuse/winfsp_fuse.h
