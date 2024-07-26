@@ -227,9 +227,13 @@ jobs:
           msystem: ${{ matrix.sys }}
           install: git autoconf automake gcc make pkg-config openssl-devel libcurl-devel libxml2-devel libzstd-devel
 
+      - name: Install WinFsp
+        shell: powershell
+        run: winget install WinFsp.WinFsp
+
       - name: Setup WinFsp as a dependency
         run: |
-          cp -r "/c/Program Files (x86)/WinFsp" ./WinFsp
+          cp -r "/c/Program Files (x86)/WinFsp/bin" ./WinFsp/bin
           cat > ./fuse.pc << 'EOS'
           arch=x64
           prefix=${pcfiledir}/WinFsp
