@@ -237,7 +237,7 @@ jobs:
       - name: Setup WinFsp as a dependency
         run: |
           # TODO: https://github.com/winfsp/winfsp/pull/567
-          patch -d ./WinFsp << 'EOS'
+          patch -f -d ./WinFsp << 'EOS'
           diff --git a/inc/fuse/winfsp_fuse.h b/inc/fuse/winfsp_fuse.h
           index 054d4af6..9dcc67dc 100644
           --- a/inc/fuse/winfsp_fuse.h
