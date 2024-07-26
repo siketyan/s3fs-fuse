@@ -227,6 +227,9 @@ jobs:
           msystem: ${{ matrix.sys }}
           install: git autoconf automake gcc make pkg-config openssl-devel libcurl-devel libxml2-devel libzstd-devel
 
+      - name: Install winget
+        uses: Cyberboss/install-winget@v1
+
       - name: Install WinFsp
         shell: powershell
         run: winget install WinFsp.WinFsp
