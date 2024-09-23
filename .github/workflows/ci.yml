@@ -255,6 +255,7 @@ jobs:
 
       - name: Test suite
         run: |
+          unset PUBLIC  # Inherited from Windows, but it conflicts with PUBLIC=1 in the test script, so unsetting it.
           make check -C src
           make ALL_TESTS=1 check -C test || (test/filter-suite-log.sh test/test-suite.log; exit 1)
 
