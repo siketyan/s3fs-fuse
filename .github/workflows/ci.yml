@@ -218,6 +218,7 @@ jobs:
 
       - uses: msys2/setup-msys2@v2
         with:
+          path-type: inherit
           msystem: ${{ matrix.sys }}
           install: git patch autoconf automake gcc make pkg-config openssl-devel libcurl-devel libxml2-devel libzstd-devel
 
