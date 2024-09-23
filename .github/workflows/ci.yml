@@ -230,7 +230,7 @@ jobs:
 
       - name: Setup WinFsp as a dependency
         run: |
-          git clone --single-branch -b v2.0 https://github.com/winfsp/winfsp.git WinFsp  
+          git clone --single-branch -b v2.1B2 https://github.com/winfsp/winfsp.git WinFsp  
           cp -r "/c/Program Files (x86)/WinFsp/bin" ./WinFsp/bin
           cat > ./fuse.pc << 'EOS'
           arch=x64
